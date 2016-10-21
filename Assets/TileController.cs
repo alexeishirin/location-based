@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
+using UnityEngine.EventSystems;
 using System.Collections;
 
 
-public class TileController : MonoBehaviour {
+public class TileController : MonoBehaviour, IPointerClickHandler, IPointerDownHandler, IPointerUpHandler {
 
 	public TextMesh tileText;
 	public GameObject locationPrefab;
@@ -52,6 +53,19 @@ public class TileController : MonoBehaviour {
 			}
 		}
 	
+	}
+
+	public void OnPointerDown( PointerEventData eventData ){
+	}
+
+	public void OnPointerUp( PointerEventData eventData ){
+	}
+
+	public void OnPointerClick( PointerEventData eventData ){
+		GameObject avatar = GameObject.FindGameObjectWithTag ("Avatar");
+		if (avatar != null) {
+			avatar.GetComponent<AvatarController> ().setNewDestination (Camera.main.ScreenToWorldPoint (Input.mousePosition));
+		}
 	}
 
 	public void loadTile(int tileX, int tileY) {
