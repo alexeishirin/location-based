@@ -6,7 +6,6 @@ public class DropController : MonoBehaviour {
 	public GameObject itemPrefab;
 
 	void OnTriggerEnter2D(Collider2D collidedWithObject) {
-		Debug.Log ("entered");
 		GameObject tileObject = collidedWithObject.gameObject;
 		if (tileObject.tag == "Tile") {
 			TileController tileController = tileObject.GetComponent<TileController> ();

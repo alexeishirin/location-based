@@ -1,7 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class LocationScript : MonoBehaviour {
+public class PanelController : MonoBehaviour {
+
+	public bool isVisible = false;
 
 	// Use this for initialization
 	void Start () {

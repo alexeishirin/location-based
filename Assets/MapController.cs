@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -15,7 +16,7 @@ public class MapController : MonoBehaviour {
 
 	float scaleFactor = 100000.0f;
 
-	float speed = 0.5f;
+	//float speed = 0.005f;
 
 	public Transform avatar;
 
@@ -28,8 +29,17 @@ public class MapController : MonoBehaviour {
 
 	Vector2 centerPosition = new Vector2 (0.0f, 2.0f);
 	Vector3 destination = new Vector3 (0.0f, 2.0f, -1);
+	Vector3 lerpStartPosition = new Vector3 (0.0f, 2.0f, -1);
 
 	public Map map;
+
+	private bool isPointerOverUIObject() {
+		PointerEventData eventDataCurrentPosition = new PointerEventData(EventSystem.current);
+		eventDataCurrentPosition.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+		List<RaycastResult> results = new List<RaycastResult>();
+		EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
+		return results.Count > 0;
+	}
 
 	// Use this for initialization
 	void Start () {
@@ -65,9 +75,9 @@ public class MapController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		//avatar.transform.position = Vector3.Lerp (avatar.transform.position, new Vector3 (30.0f, 30.0f, avatar.transform.position.z), speed * 0.1f * Time.deltaTime);
-		if (this.startLatitude != 0.0f && this.startLongitude != 0.0f && avatar.transform.position != this.destination) {
-			avatar.transform.position = Vector3.Lerp (avatar.transform.position, this.destination, speed * Time.deltaTime);
-		}	
+		//if (this.startLatitude != 0.0f && this.startLongitude != 0.0f && avatar.transform.position != this.destination) {
+		//	avatar.transform.position = Vector3.Lerp (avatar.transform.position, this.destination, speed * Time.deltaTime);
+		//}	
 	}
 
 	void StartGPS () {
@@ -119,11 +129,13 @@ public class MapController : MonoBehaviour {
 					}
 					currentLatitude = Input.location.lastData.latitude;
 					currentLongitude = Input.location.lastData.longitude;
-					this.destination = new Vector3(centerPosition.x + this.getCurrentMoveVector ().x, centerPosition.y + this.getCurrentMoveVector().y, avatar.transform.position.z);
+					//this.lerpStartPosition = avatar.transform.position;
+					//this.destination = new Vector3(centerPosition.x + this.getCurrentMoveVector ().x, centerPosition.y - this.getCurrentMoveVector().y, avatar.transform.position.z);
+					//this.currentLerpTime = 0f;
 					latLongText.text = "Lat Long: " + currentLatitude + ", " + currentLongitude;
 					xyText.text = "Distance: " + this.getCurrentMoveVector ().magnitude * 100 + "m";
 					//debugText.text = Input.location.lastData.latitude + " " + Input.location.lastData.longitude + " " + Input.location.lastData.altitude + " " + Input.location.lastData.horizontalAccuracy + " " + Input.location.lastData.timestamp + tick + Input.location.status.ToString();
-					Debug.Log ("Location: " + Input.location.lastData.latitude + " " + Input.location.lastData.longitude + " " + Input.location.lastData.altitude + " " + Input.location.lastData.horizontalAccuracy + " " + Input.location.lastData.timestamp);
+					//Debug.Log ("Location: " + Input.location.lastData.latitude + " " + Input.location.lastData.longitude + " " + Input.location.lastData.altitude + " " + Input.location.lastData.horizontalAccuracy + " " + Input.location.lastData.timestamp);
 				}
 			}
 			yield return new WaitForSeconds (1);
