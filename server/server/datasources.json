@@ -1,0 +1,16 @@
+{
+  "db": {
+    "name": "db",
+    "connector": "memory"
+  },
+  "derelict": {
+    "host": "localhost",
+    "port": 27017,
+    "url": "mongodb://localhost/derelict",
+    "database": "derelict",
+    "password": "",
+    "name": "derelict",
+    "user": "",
+    "connector": "mongodb"
+  }
+}
