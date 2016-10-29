@@ -6,6 +6,9 @@ using System.Collections.Generic;
 
 public class MapController : MonoBehaviour {
 
+	private AccountService accountService;
+	private AuthService authService;
+
 	float startLatitude = 0.0f;
 	float startLongitude = 0.0f;
 	float currentLatitude = 0.0f;
@@ -43,6 +46,19 @@ public class MapController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		accountService = AccountService.getInstance();
+		authService = AuthService.getInstance ();
+
+		authService.login ("DarkestDay", "Pool1580")
+			.Then (value => {
+				authService.setAuthToken(value);
+				Debug.Log(authService.getAuthToken());
+			})
+			.Catch (exception => Debug.LogException (exception));
+
+		//UserService.login ("DarkestDay", "Pool1580")
+		//	.Then (value => Debug.Log (value))
+		//	.Catch (exception => Debug.LogException (exception));
 		if (this.map == null) {
 			this.map = new Map ();
 			this.map.initMap ();

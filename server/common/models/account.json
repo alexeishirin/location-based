@@ -37,6 +37,7 @@
       "model": "userCredential",
       "foreignKey": "userId"
     }
+
   },
   "acls": [],
   "methods": {}
