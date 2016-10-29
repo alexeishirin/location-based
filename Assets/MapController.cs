@@ -51,7 +51,6 @@ public class MapController : MonoBehaviour {
 
 		authService.login ("DarkestDay", "Pool1580")
 			.Then (value => {
-				authService.setAuthToken(value);
 				Debug.Log(authService.getAuthToken());
 			})
 			.Catch (exception => Debug.LogException (exception));

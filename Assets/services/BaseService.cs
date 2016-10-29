@@ -9,6 +9,7 @@ using UnityEngine.Networking;
 
 public class BaseService<T> : MonoBehaviour where T: BaseModel, IBaseModel, new(){
 	public static string API_END_POINT = "http://derelict-92382.onmodulus.net/api/";
+	public ActionHelper<T> actionHelper = new ActionHelper<T>();
 
 	public IPromise<T> create(T newObject){
 		string url = this.getServiceEndPoint();
@@ -108,43 +109,6 @@ public class BaseService<T> : MonoBehaviour where T: BaseModel, IBaseModel, new(
 			reject(ex);
 		}
 		
-	}
-
-	public class JSONProperty {
-		public string key;
-		public object value;
-
-		public JSONProperty (string key, object value) {
-			this.key = key;
-			this.value = value;
-		}
-
-		public string toJSONString () {
-			return "\"" + this.key + "\":\"" + this.value.ToString() + "\"";
-		}
-	}
-
-	public class JSONObject {
-		public List<JSONProperty> properties = new List<JSONProperty>();
-
-		public void addProperty(JSONProperty property) {
-			this.properties.Add (property);
-		}
-
-		public string toJSONString () {
-			string jsonString = "{";
-
-			foreach(JSONProperty property in this.properties) {
-				jsonString += property.toJSONString();
-				if (this.properties.IndexOf (property) != this.properties.Count - 1) {
-					jsonString += ",";
-				}
-			}
-
-			jsonString += "}";
-
-			return jsonString;
-		}
 	}
 }
 
