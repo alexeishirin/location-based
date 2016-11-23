@@ -3,7 +3,7 @@ using UnityEngine.EventSystems;
 using System.Collections;
 
 
-public class TileController : MonoBehaviour, IPointerClickHandler, IPointerDownHandler, IPointerUpHandler {
+public class HexController : MonoBehaviour, IPointerClickHandler, IPointerDownHandler, IPointerUpHandler {
 
 	public TextMesh hexText;
 	public GameObject locationPrefab;
@@ -19,13 +19,13 @@ public class TileController : MonoBehaviour, IPointerClickHandler, IPointerDownH
 
 	// Use this for initialization
 	void Start () {
-	
+
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
 		GameObject avatar = GameObject.FindGameObjectWithTag ("Avatar");
-		if (avatar != null) {
+		if (false && avatar != null) {
 			Vector2 toAvatarVector = new Vector2 (avatar.transform.position.x - transform.position.x, avatar.transform.position.y - transform.position.y);
 			float tileSize = GetComponent<Renderer> ().bounds.size.x;
 			float moveVectorX = 0.0f;
@@ -52,7 +52,7 @@ public class TileController : MonoBehaviour, IPointerClickHandler, IPointerDownH
 				this.loadHex (this.mapX + tileXdifference, this.mapY + tileYdifference);
 			}
 		}
-	
+
 	}
 
 	public void OnPointerDown( PointerEventData eventData ){
@@ -69,6 +69,7 @@ public class TileController : MonoBehaviour, IPointerClickHandler, IPointerDownH
 	}
 
 	public void loadHex(int hexX, int hexY) {
+		Debug.Log ("Loading hex:  " + hexX + ":" + hexY);
 		this.hex = this.map.getHex (hexX, hexY);
 		this.mapX = hexX;
 		this.mapY = hexY;
@@ -88,13 +89,12 @@ public class TileController : MonoBehaviour, IPointerClickHandler, IPointerDownH
 	}
 
 	public Vector3 calculateLocationPosition(Location location) {
-		float tileTop = transform.position.y + GetComponent<Renderer> ().bounds.size.y / 2;
-		float tileLeft = transform.position.x - GetComponent<Renderer> ().bounds.size.x / 2;
+		float hexTop = transform.position.y + GetComponent<Renderer> ().bounds.size.y / 2;
+		float hexLeft = transform.position.x - GetComponent<Renderer> ().bounds.size.x / 2;
 
-		float locationX = tileLeft + GetComponent<Renderer> ().bounds.size.x * location.inHexPositionX;
-		float locationY = tileTop - GetComponent<Renderer> ().bounds.size.y * location.inHexPositionY;
+		float locationX = hexLeft + GetComponent<Renderer> ().bounds.size.x * location.inHexPositionX;
+		float locationY = hexTop - GetComponent<Renderer> ().bounds.size.y * location.inHexPositionY;
 
 		return new Vector3 (locationX, locationY, this.transform.position.z);
-	
 	}
 }

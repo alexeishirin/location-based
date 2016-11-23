@@ -4,16 +4,34 @@ using System.Collections;
 
 public class UIController : MonoBehaviour {
 
+	public AuthService authService;
+	public I18nService i18nService;
+
 	public GameObject statusPanel;
 	public GameObject debugConsole;
 	public GameObject mainPanel;
 	public GameObject choosePanel;
 	public GameObject debugPanel;
+	public GameObject loginScreen;
 	public Text debugLogPrefab;
 
 	// Use this for initialization
 	void Start () {
-	
+		AuthToken authToken = authService.loadPersistedAuthToken ();
+
+		if (authToken != null) {
+			loginScreen.SetActive (false);
+			//load data for the map
+			Debug.Log("Loading data for the map");
+		} else {
+			loginScreen.SetActive (true);
+		}
+
+		i18nService.loadLanguageFile ()
+			.Then (value => {
+				Debug.Log(value);
+			})
+			.Catch (exception => Debug.LogException (exception));
 	}
 	
 	// Update is called once per frame
@@ -42,6 +60,10 @@ public class UIController : MonoBehaviour {
 		return uiControllerObject.GetComponent<UIController> ();
 	}
 
+	public void showMap(){
+		loginScreen.SetActive (false);
+		this.showMessage ("Successfully logged in");
+	}
 	public void toggleMainPanel(){
 		this.mainPanel.SetActive(!this.mainPanel.activeSelf);
 	}

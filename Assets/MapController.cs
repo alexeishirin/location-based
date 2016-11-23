@@ -6,8 +6,8 @@ using System.Collections.Generic;
 
 public class MapController : MonoBehaviour {
 
-	private AccountService accountService;
-	private AuthService authService;
+	public AccountService accountService;
+	public AuthService authService;
 
 	float startLatitude = 0.0f;
 	float startLongitude = 0.0f;
@@ -46,18 +46,6 @@ public class MapController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		accountService = AccountService.getInstance();
-		authService = AuthService.getInstance ();
-
-		authService.login ("DarkestDay", "Pool1580")
-			.Then (value => {
-				Debug.Log(authService.getAuthToken());
-			})
-			.Catch (exception => Debug.LogException (exception));
-
-		//UserService.login ("DarkestDay", "Pool1580")
-		//	.Then (value => Debug.Log (value))
-		//	.Catch (exception => Debug.LogException (exception));
 		if (this.map == null) {
 			this.map = new Map ();
 			this.map.initMap ();
@@ -195,7 +183,7 @@ public class MapController : MonoBehaviour {
 		TileController tileController = tile.GetComponent<TileController> ();
 		tileController.map = this.map;
 		tileController.zoomLevel = zoomLevel;
-		tileController.loadTile (this.startX + x, this.startY + y);
+		tileController.loadHex (this.startX + x, this.startY + y);
 		tile.transform.position = new Vector2 (centerPosition.x + tile.GetComponent<Renderer> ().bounds.size.x * x, centerPosition.y - tile.GetComponent<Renderer> ().bounds.size.y * y);
 
 		return tile;

@@ -10,6 +10,7 @@ using UnityEngine.Networking;
 public class BaseService<T> : MonoBehaviour where T: BaseModel, IBaseModel, new(){
 	public static string API_END_POINT = "http://derelict-92382.onmodulus.net/api/";
 	public ActionHelper<T> actionHelper = new ActionHelper<T>();
+	public AuthService authService;
 
 	public IPromise<T> create(T newObject){
 		string url = this.getServiceEndPoint();
@@ -89,7 +90,7 @@ public class BaseService<T> : MonoBehaviour where T: BaseModel, IBaseModel, new(
 
 	public IEnumerator sendRequest(UnityWebRequest request, Action<T> resolve, Action<Exception> reject) {
 		request.SetRequestHeader("Content-Type", "application/json");
-		AuthService.getInstance ().signRequest (request);
+		authService.signRequest (request);
 		yield return request.Send(); // Allow the async operation to complete.
 
 		try
@@ -101,7 +102,11 @@ public class BaseService<T> : MonoBehaviour where T: BaseModel, IBaseModel, new(
 			else
 			{
 				Debug.Log(request.downloadHandler.text);
-				resolve(JsonUtility.FromJson<T>(request.downloadHandler.text));
+				if(request.downloadHandler.text.StartsWith("{\"error\"")){
+					reject(new ApplicationException(request.downloadHandler.text));
+				} else {
+					resolve(JsonUtility.FromJson<T>(request.downloadHandler.text));
+				}
 			}
 		}
 		catch (Exception ex)

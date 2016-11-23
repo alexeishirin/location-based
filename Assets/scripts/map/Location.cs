@@ -8,27 +8,27 @@ public class Location {
 
 	public LocationType locationType;
 	//from 0.0 to 1.0
-	public float inTilePositionX = 0.0f;
-	public float inTilePositionY = 0.0f;
+	public float inHexPositionX = 0.0f;
+	public float inHexPositionY = 0.0f;
 	public string name;
 	public string description;
 	public List<ItemType> droppedItemTypes = new List<ItemType>();
 
-	public Location(LocationType locationType, string name, string description, float inTilePositionX, float inTilePositionY, List<ItemType> droppedItemTypes){
+	public Location(LocationType locationType, string name, string description, float inHexPositionX, float inHexPositionY, List<ItemType> droppedItemTypes){
 		this.locationType = locationType;
 		this.name = name;
 		this.description = description;
-		this.inTilePositionX = inTilePositionX;
-		this.inTilePositionY = inTilePositionY;
+		this.inHexPositionX = inHexPositionX;
+		this.inHexPositionY = inHexPositionY;
 		this.droppedItemTypes = droppedItemTypes;
 	}
 
-	public Location(LocationType locationType, string name, string description, float inTilePositionX, float inTilePositionY){
+	public Location(LocationType locationType, string name, string description, float inHexPositionX, float inHexPositionY){
 		this.locationType = locationType;
 		this.name = name;
 		this.description = description;
-		this.inTilePositionX = inTilePositionX;
-		this.inTilePositionY = inTilePositionY;
+		this.inHexPositionX = inHexPositionX;
+		this.inHexPositionY = inHexPositionY;
 		this.droppedItemTypes = Location.getDefaultDropItems (locationType);
 	}
 
@@ -53,7 +53,7 @@ public class Location {
 
 	public override string ToString ()
 	{
-		return "Location:";
+		return "Location:" + JsonUtility.ToJson(this);
 	}
 }
 

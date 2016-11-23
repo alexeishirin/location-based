@@ -9,37 +9,30 @@ using RSG;
 using UnityEngine.Networking;
 
 public class AuthService : BaseService<AuthToken>{
-	private static AuthService instance = null;
 	private AuthToken token = null;
 	private string AUTH_TOKEN_PERSIST_PATH;
 
-	public static AuthService getInstance () {
-		if (instance == null)
-		{
-			var gameObject = new GameObject("AuthService");
-			GameObject.DontDestroyOnLoad(gameObject);
-			instance = gameObject.AddComponent<AuthService>();
-			instance.AUTH_TOKEN_PERSIST_PATH = Application.persistentDataPath + "/auth.dat";
-			Debug.Log (instance.AUTH_TOKEN_PERSIST_PATH);
-		}
-
-		return instance;
+	void Start(){
+		//AttributeTargets.
+		this.AUTH_TOKEN_PERSIST_PATH = Application.persistentDataPath + "/auth.dat";
 	}
-
 	public IPromise<AuthToken> login(string username, string password) {
 		JSONObject loginObject = new JSONObject ();
 		loginObject.addProperty (new JSONProperty ("username", username));
 		loginObject.addProperty (new JSONProperty ("password", password));
 
+		//AuthToken persistedToken = this.loadPersistedAuthToken();
+		//if (persistedToken != null) {
+		//	return new Promise<AuthToken>((resolve, reject) => {
+		//		resolve(persistedToken);
+		//	});
+		//}
+
 		return new Promise<AuthToken>((resolve, reject) => {
-			AuthToken persistedToken = this.loadPersistedAuthToken();
-			if (persistedToken != null) {
-				Action<AuthToken> newResolve = actionHelper.createSequence(this.setAuthToken, resolve);
-				newResolve(persistedToken);
-			} else {
-				Action<AuthToken> newResolve = actionHelper.createSequence(this.setAuthToken, this.persistAuthToken, resolve);
-				StartCoroutine(this.postRequestCoroutine(this.getServiceEndPoint() + "/login?include=user", loginObject.toJSONString(), newResolve, reject));
-			}
+			StartCoroutine(this.postRequestCoroutine(this.getServiceEndPoint() + "/login?include=user", loginObject.toJSONString(), resolve, reject));
+		}).Then(authToken => {
+			this.setAuthToken(authToken);
+			this.persistAuthToken(authToken);
 		});
 	}
 
@@ -52,6 +45,7 @@ public class AuthService : BaseService<AuthToken>{
 	}
 
 	public void signRequest(UnityWebRequest request){
+		Debug.Log ("Signed request");
 		if (this.token != null) {
 			request.SetRequestHeader ("Authorization", this.token.id);
 		}
@@ -76,6 +70,8 @@ public class AuthService : BaseService<AuthToken>{
 		file.Close ();
 
 		Debug.Log ("Auth token succesfully loaded");
+
+		this.setAuthToken (authToken);
 
 		return authToken;
 	}

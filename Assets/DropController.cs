@@ -6,29 +6,29 @@ public class DropController : MonoBehaviour {
 	public GameObject itemPrefab;
 
 	void OnTriggerEnter2D(Collider2D collidedWithObject) {
-		GameObject tileObject = collidedWithObject.gameObject;
-		if (tileObject.tag == "Tile") {
-			TileController tileController = tileObject.GetComponent<TileController> ();
-			Tile tile = tileController.tile;
-			Item droppedItem = this.dropItem (tile);
+		GameObject hexObject = collidedWithObject.gameObject;
+		if (hexObject.tag == "Hex") {
+			HexController hexController = hexObject.GetComponent<HexController> ();
+			Hex hex = hexController.hex;
+			Item droppedItem = this.dropItem (hex);
 			if (droppedItem != null) {
 				GameObject item = (GameObject)Instantiate (itemPrefab);
-				Renderer tileRenderer = tileController.GetComponent<Renderer> ();
+				Renderer hexRenderer = hexController.GetComponent<Renderer> ();
 				item.transform.position = new Vector3 (
-					Random.Range (tileRenderer.bounds.min.x, tileRenderer.bounds.max.x),
-					Random.Range (tileRenderer.bounds.min.y, tileRenderer.bounds.max.y),
-					tileController.transform.position.z);
+					Random.Range (hexRenderer.bounds.min.x, hexRenderer.bounds.max.x),
+					Random.Range (hexRenderer.bounds.min.y, hexRenderer.bounds.max.y),
+					hexController.transform.position.z);
 				item.GetComponent<ItemController> ().item = droppedItem;
 			}
 		}
 	}
 
-	public Item dropItem(Tile tile) {
+	public Item dropItem(Hex hex) {
 		float dropRate = 100.0f;
 
 		float dropRoll = Random.Range (0.0f, 100.0f);
 		if (dropRoll <= dropRate) {
-			ItemType itemType = tile.droppedItemTypes[Random.Range(0, tile.droppedItemTypes.Count)];
+			ItemType itemType = hex.droppedItemTypes[Random.Range(0, hex.droppedItemTypes.Count)];
 			return new Item (itemType);
 		}
 			
