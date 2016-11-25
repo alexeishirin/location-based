@@ -1,0 +1,11 @@
+{
+  "db": {
+    "name": "db",
+    "connector": "memory"
+  },
+  "derelict": {
+    "url": "mongodb://DarkestDay:Pool1580@waffle.modulusmongo.net:27017/jUjozu2b",
+    "database": "derelict",
+    "connector": "mongodb"
+  }
+}

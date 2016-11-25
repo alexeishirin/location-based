@@ -1,9 +1,11 @@
 ﻿using UnityEngine;
+using UnityEngine.EventSystems;
 using System.Collections;
 
-public class AreaController : MonoBehaviour {
+public class AreaController : MonoBehaviour, IPointerClickHandler, IPointerDownHandler, IPointerUpHandler {
 
 	public Area area;
+	public bool isAreaInEffect;
 
 	// Use this for initialization
 	void Start () {
@@ -26,5 +28,28 @@ public class AreaController : MonoBehaviour {
 		float newLocalScaleY = this.transform.localScale.y / currentHeight * targetHeight;
 
 		return new Vector3 (newLocalScaleX, newLocalScaleY, transform.localScale.z);
+	}
+
+	public void OnPointerDown( PointerEventData eventData ){
+	}
+
+	public void OnPointerUp( PointerEventData eventData ){
+	}
+
+	public void OnPointerClick( PointerEventData eventData ){
+	}
+
+	void OnTriggerEnter2D(Collider2D collidedWithObject) {
+		if (collidedWithObject.gameObject.tag == "InteractRadius") {
+			this.isAreaInEffect = true;
+			UIController.getInstance().showMessage("Entered the Area!");
+		}
+	}
+
+	void OnTriggerExit2D(Collider2D collidedWithObject) {
+		if (collidedWithObject.gameObject.tag == "InteractRadius") {
+			this.isAreaInEffect = false;
+			UIController.getInstance().showMessage("Left the Area!");
+		}
 	}
 }

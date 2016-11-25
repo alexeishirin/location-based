@@ -1,10 +1,11 @@
 ﻿using UnityEngine;
+using UnityEngine.EventSystems;
 using System.Collections;
 
 
-public class TileController : MonoBehaviour {
+public class TileController : MonoBehaviour, IPointerClickHandler, IPointerDownHandler, IPointerUpHandler {
 
-	public TextMesh tileText;
+	public TextMesh hexText;
 	public GameObject locationPrefab;
 	public GameObject areaPrefab;
 
@@ -12,7 +13,7 @@ public class TileController : MonoBehaviour {
 	public int mapY = -1;
 
 	public Map map;
-	public Tile tile;
+	public Hex hex;
 
 	public float zoomLevel = 3;
 
@@ -48,18 +49,31 @@ public class TileController : MonoBehaviour {
 
 			if (moveVectorX != 0.0f || moveVectorY != 0.0f) {
 				transform.position = new Vector3 (transform.position.x + moveVectorX, transform.position.y + moveVectorY, transform.position.z);
-				this.loadTile (this.mapX + tileXdifference, this.mapY + tileYdifference);
+				this.loadHex (this.mapX + tileXdifference, this.mapY + tileYdifference);
 			}
 		}
 	
 	}
 
-	public void loadTile(int tileX, int tileY) {
-		this.tile = this.map.getTile (tileX, tileY);
-		this.mapX = tileX;
-		this.mapY = tileY;
-		this.tileText.text = tileX + ":" + tileY;
-		foreach(Location location in this.tile.locations){
+	public void OnPointerDown( PointerEventData eventData ){
+	}
+
+	public void OnPointerUp( PointerEventData eventData ){
+	}
+
+	public void OnPointerClick( PointerEventData eventData ){
+		GameObject avatar = GameObject.FindGameObjectWithTag ("Avatar");
+		if (avatar != null) {
+			avatar.GetComponent<AvatarController> ().setNewDestination (Camera.main.ScreenToWorldPoint (Input.mousePosition));
+		}
+	}
+
+	public void loadHex(int hexX, int hexY) {
+		this.hex = this.map.getHex (hexX, hexY);
+		this.mapX = hexX;
+		this.mapY = hexY;
+		this.hexText.text = hexX + ":" + hexY;
+		foreach(Location location in this.hex.locations){
 			GameObject locationObject = null;
 			if (location is Area) {
 				locationObject = (GameObject)Instantiate (areaPrefab, Vector3.zero, Quaternion.identity, this.transform);
@@ -77,8 +91,8 @@ public class TileController : MonoBehaviour {
 		float tileTop = transform.position.y + GetComponent<Renderer> ().bounds.size.y / 2;
 		float tileLeft = transform.position.x - GetComponent<Renderer> ().bounds.size.x / 2;
 
-		float locationX = tileLeft + GetComponent<Renderer> ().bounds.size.x * location.inTilePositionX;
-		float locationY = tileTop - GetComponent<Renderer> ().bounds.size.y * location.inTilePositionY;
+		float locationX = tileLeft + GetComponent<Renderer> ().bounds.size.x * location.inHexPositionX;
+		float locationY = tileTop - GetComponent<Renderer> ().bounds.size.y * location.inHexPositionY;
 
 		return new Vector3 (locationX, locationY, this.transform.position.z);
 	

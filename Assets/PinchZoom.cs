@@ -17,12 +17,12 @@ public class PinchZoom : MonoBehaviour
 	private int zoomLevel = 4;
 
 	void Start() {
-		float tileSize = this.getTileSize ();
-		minOrthographicSize = 0.7f * tileSize * Screen.height / (2.0f * Screen.width);
-		maxOrthographicSize = 3 * tileSize * Screen.height / (2.0f * Screen.width);
+		float hexSize = this.getHexSize ();
+		minOrthographicSize = 0.7f * hexSize * Screen.height / (2.0f * Screen.width);
+		maxOrthographicSize = 3 * hexSize * Screen.height / (2.0f * Screen.width);
 		this.zoomLevel = 5;
-		mapGameObject.GetComponent<MapController> ().setZoomLevel(this.zoomLevel);
-		this.GetComponent<Camera> ().orthographicSize = 1.2f * tileSize * Screen.height / (2.0f * Screen.width);
+		mapGameObject.GetComponent<HexMapController> ().setZoomLevel(this.zoomLevel);
+		this.GetComponent<Camera> ().orthographicSize = 6f * hexSize * Screen.height / (2.0f * Screen.width);
 	}
 
 	void Update()
@@ -53,7 +53,7 @@ public class PinchZoom : MonoBehaviour
 			// Make sure the orthographic size never drops below zero.
 			camera.orthographicSize = Mathf.Max(camera.orthographicSize, minOrthographicSize);
 			camera.orthographicSize = Mathf.Min(camera.orthographicSize, maxOrthographicSize);
-			int newZoomLevel = Mathf.CeilToInt(camera.orthographicSize / this.getTileSize ()) + 2;
+			int newZoomLevel = Mathf.CeilToInt(camera.orthographicSize / this.getHexSize ()) + 2;
 			if (newZoomLevel != this.zoomLevel) {
 				this.zoomLevel = newZoomLevel;
 			}
@@ -61,9 +61,9 @@ public class PinchZoom : MonoBehaviour
 		}
 	}
 
-	public float getTileSize() {
-		MapController mapController = mapGameObject.GetComponent<MapController> ();
+	public float getHexSize() {
+		HexMapController mapController = mapGameObject.GetComponent<HexMapController> ();
 
-		return mapController.tilePrefab.GetComponent<Renderer> ().bounds.size.x;
+		return mapController.hexPrefab.GetComponent<Renderer> ().bounds.size.x;
 	}
 }
