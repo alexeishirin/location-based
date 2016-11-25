@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Collections;
+using System.Collections.Generic;
 
 public class AvatarController : MonoBehaviour{
 	float currentLerpTime = 1.0f;
@@ -9,6 +10,9 @@ public class AvatarController : MonoBehaviour{
 
 	Vector3 destination = new Vector3 (0.0f, 2.0f, -1);
 	Vector3 lerpStartPosition = new Vector3 (0.0f, 2.0f, -1);
+
+	public Hex currentHex;
+	public Hex previousHex;
 
 	// Use this for initialization
 	void Start () {
@@ -32,6 +36,9 @@ public class AvatarController : MonoBehaviour{
 		this.destination = new Vector3(newDestination.x, newDestination.y, this.transform.position.z);
 		this.lerpStartPosition = this.transform.position;
 		this.currentLerpTime = 0f;
-		Debug.Log (this.destination);
+	}
+
+	public Vector2 lastShift() {
+		return new Vector2 (currentHex.x - previousHex.x, currentHex.y - previousHex.y);
 	}
 }

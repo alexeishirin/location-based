@@ -25,32 +25,49 @@ public class HexController : MonoBehaviour, IPointerClickHandler, IPointerDownHa
 	// Update is called once per frame
 	void Update () {
 		GameObject avatar = GameObject.FindGameObjectWithTag ("Avatar");
-		if (false && avatar != null) {
+		if (avatar != null) {
 			Vector2 toAvatarVector = new Vector2 (avatar.transform.position.x - transform.position.x, avatar.transform.position.y - transform.position.y);
-			float tileSize = GetComponent<Renderer> ().bounds.size.x;
-			float moveVectorX = 0.0f;
-			float moveVectorY = 0.0f;
-			int tileXdifference = 0;
-			int tileYdifference = 0;
-			if (toAvatarVector.x >= (zoomLevel / 2) * tileSize) {
-				moveVectorX = zoomLevel * tileSize;
-				tileXdifference = Mathf.RoundToInt(zoomLevel);
-			} else if (toAvatarVector.x <= - (zoomLevel / 2) * tileSize) {
-				moveVectorX = - zoomLevel * tileSize;
-				tileXdifference = - Mathf.RoundToInt(zoomLevel);
+			AvatarController avatarController = avatar.GetComponent<AvatarController> ();
+			if (avatarController != null && avatarController.currentHex != null) {
+				if (this.hexDistance (avatarController.currentHex, this.hex) >= Mathf.CeilToInt(zoomLevel / 2)) {
+					//Debug.Log (this.hex.x + ":" + this.hex.y + ":" + this.hexDistance (avatarController.currentHex, this.hex));
+					this.shiftHex (avatarController);
+				}
 			}
-			if (toAvatarVector.y >= (zoomLevel / 2) * tileSize) {
-				moveVectorY = zoomLevel * tileSize;
-				tileYdifference = - Mathf.RoundToInt(zoomLevel);
-			} else if (toAvatarVector.y <= - (zoomLevel / 2) * tileSize) {
-				moveVectorY = - zoomLevel * tileSize;
-				tileYdifference = + Mathf.RoundToInt(zoomLevel);
+			/*
+			float hexSize = GetComponent<Renderer> ().bounds.size.x;
+			int hexXdifference = 0;
+			int hexYdifference = 0;
+
+			if (toAvatarVector.x >= (zoomLevel / 2) * hexSize) {
+				hexXdifference = Mathf.RoundToInt(zoomLevel);
+			} else if (toAvatarVector.x <= - (zoomLevel / 2) * hexSize) {
+				hexXdifference = - Mathf.RoundToInt(zoomLevel);
 			}
 
-			if (moveVectorX != 0.0f || moveVectorY != 0.0f) {
-				transform.position = new Vector3 (transform.position.x + moveVectorX, transform.position.y + moveVectorY, transform.position.z);
-				this.loadHex (this.mapX + tileXdifference, this.mapY + tileYdifference);
+			int xActualDifference = Mathf.Abs(Mathf.RoundToInt (toAvatarVector.x / hexSize));
+
+			float yAxisProjection = toAvatarVector.y / Mathf.Cos (Mathf.PI / 6);
+
+			if (yAxisProjection >= (zoomLevel / 2) * hexSize) {
+				hexYdifference = Mathf.RoundToInt(zoomLevel);
+			} else if (yAxisProjection <= - (zoomLevel / 2) * hexSize) {
+				hexYdifference = - Mathf.RoundToInt(zoomLevel);
 			}
+
+			int yActualDifference = Mathf.Abs(Mathf.RoundToInt (yAxisProjection / hexSize));
+
+			if (xActualDifference + yActualDifference >= 3) {
+				//Debug.Log (this.mapX + ":" + this.mapY);
+			}
+			*/
+
+			/*if (hexXdifference != 0 || hexYdifference != 0) {
+				Vector2 xShiftVector = hexXdifference * this.getHexXStepVector ();
+				Vector2 yShiftVector = hexYdifference * this.getHexYStepVector ();
+				transform.position += (Vector3)xShiftVector + (Vector3) yShiftVector;
+				this.loadHex (this.mapX + hexXdifference, this.mapY + hexYdifference);
+			}*/
 		}
 
 	}
@@ -69,7 +86,6 @@ public class HexController : MonoBehaviour, IPointerClickHandler, IPointerDownHa
 	}
 
 	public void loadHex(int hexX, int hexY) {
-		Debug.Log ("Loading hex:  " + hexX + ":" + hexY);
 		this.hex = this.map.getHex (hexX, hexY);
 		this.mapX = hexX;
 		this.mapY = hexY;
@@ -97,4 +113,50 @@ public class HexController : MonoBehaviour, IPointerClickHandler, IPointerDownHa
 
 		return new Vector3 (locationX, locationY, this.transform.position.z);
 	}
+
+	public Vector2 getHexXStepVector() {
+		float hexSizeX = this.GetComponent<Renderer> ().bounds.size.x;
+		return hexSizeX * this.getHexGridXUnitVector ();
+	}
+	public Vector2 getHexYStepVector() {
+		float hexSizeX = this.GetComponent<Renderer> ().bounds.size.x;
+		return hexSizeX * this.getHexGridYUnitVector();
+	}
+
+	public Vector2 getHexGridXUnitVector() {
+		return new Vector2 (1, 0);
+	}
+
+	public Vector2 getHexGridYUnitVector() {
+		return new Vector2 (Mathf.Cos(2 * Mathf.PI / 3), Mathf.Sin(2 * Mathf.PI / 3));
+	}
+
+	public void shiftHex(AvatarController avatarController) {
+		Vector2 avatarShift = avatarController.lastShift ();
+		int avatarShiftX = Mathf.RoundToInt(avatarShift.x);
+		int avatarShiftY = Mathf.RoundToInt(avatarShift.y);
+		int dx = Mathf.Abs (avatarController.previousHex.x - this.hex.x);
+		int dy = Mathf.Abs (avatarController.previousHex.y - this.hex.y);
+		int xShift = avatarShiftX * (Mathf.RoundToInt(zoomLevel) - Mathf.Abs(avatarShiftX * dy - avatarShiftY * dx));
+		int yShift = avatarShiftY * (Mathf.RoundToInt(zoomLevel) - Mathf.Abs(avatarShiftY * dx - avatarShiftX * dy));
+		
+		if (hexDistance (this.map.getHex (this.hex.x + xShift, this.hex.y + yShift), avatarController.currentHex) >= Mathf.CeilToInt (zoomLevel / 2)) {
+			Debug.Log ("canceling shift");
+			return;
+		}
+
+		Vector2 xShiftVector = xShift * this.getHexXStepVector ();
+		Vector2 yShiftVector = yShift * this.getHexYStepVector ();
+		transform.position += (Vector3)xShiftVector + (Vector3) yShiftVector;
+		this.loadHex (this.hex.x + xShift, this.hex.y + yShift);
+	}
+
+	public int hexDistance (Hex hexOne, Hex hexTwo) {
+		return 
+			(Mathf.Abs (hexOne.x - hexTwo.x) +
+				Mathf.Abs (hexOne.x - hexTwo.x - (hexOne.y - hexTwo.y)) +
+				Mathf.Abs (hexOne.y - hexTwo.y)) / 2;
+	}
+
+
 }

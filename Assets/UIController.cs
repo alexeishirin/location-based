@@ -19,7 +19,7 @@ public class UIController : MonoBehaviour {
 	void Start () {
 		AuthToken authToken = authService.loadPersistedAuthToken ();
 
-		if (authToken != null) {
+		if (true || authToken != null) {
 			loginScreen.SetActive (false);
 			//load data for the map
 			Debug.Log("Loading data for the map");

@@ -11,8 +11,8 @@ public class HexMapController : MonoBehaviour {
 	float currentLatitude = 0.0f;
 	float currentLongitude = 0.0f;
 
-	int startX = 9;
-	int startY = 9;
+	int startX = 50;
+	int startY = 50;
 
 	float scaleFactor = 100000.0f;
 
@@ -57,7 +57,7 @@ public class HexMapController : MonoBehaviour {
 
 		for (int x = startIndex; x <= endIndex; x++) {
 			for (int y = startIndex; y <= endIndex; y++) {
-				if ((x - y) <= 2 && (x - y) >= -2) {
+				if ((x - y) <= newZoomLevel / 2 && (x - y) >= -newZoomLevel / 2) {
 					this.hexControllers.Add (this.createHex (x, y, newZoomLevel));
 				}
 			}

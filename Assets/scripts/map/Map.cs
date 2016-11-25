@@ -25,8 +25,8 @@ public class Map {
 	public void loadHexes(){
 		List<ItemType> standardDropItemTypes = new List<ItemType> ();
 		standardDropItemTypes.Add (ItemType.MODULE);
-		for(int y = 1; y <= 20; y++){
-			for (int x = 1; x <= 20; x++) {
+		for(int y = 1; y <= 100; y++){
+			for (int x = 1; x <= 100; x++) {
 				Hex newHex = new Hex (HexType.ROAD_HEX, x, y, "", standardDropItemTypes);
 				this.hexes.Add(newHex);
 				if (x == 9 && y == 9) {

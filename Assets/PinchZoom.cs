@@ -22,7 +22,7 @@ public class PinchZoom : MonoBehaviour
 		maxOrthographicSize = 3 * hexSize * Screen.height / (2.0f * Screen.width);
 		this.zoomLevel = 5;
 		mapGameObject.GetComponent<HexMapController> ().setZoomLevel(this.zoomLevel);
-		this.GetComponent<Camera> ().orthographicSize = 1.2f * hexSize * Screen.height / (2.0f * Screen.width);
+		this.GetComponent<Camera> ().orthographicSize = 6f * hexSize * Screen.height / (2.0f * Screen.width);
 	}
 
 	void Update()
